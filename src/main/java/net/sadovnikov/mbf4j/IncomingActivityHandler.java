@@ -1,7 +1,16 @@
 package net.sadovnikov.mbf4j;
 
 
-public interface IncomingActivityHandler {
+import net.sadovnikov.mbf4j.activities.incoming.IncomingActivity;
 
-    public void handle(Activity activity);
+import java.lang.reflect.ParameterizedType;
+
+public interface IncomingActivityHandler<T extends IncomingActivity> {
+
+    void handle(T activity);
+
+    default boolean checkCanHandle(Class type) {
+        ParameterizedType genericTypes = (ParameterizedType) this.getClass().getGenericSuperclass();
+        return genericTypes.getActualTypeArguments()[0].getClass().isAssignableFrom(type);
+    }
 }

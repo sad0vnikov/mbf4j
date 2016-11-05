@@ -15,7 +15,4 @@ public abstract class ApiResponse {
         return this.response;
     }
 
-    public abstract Map<String,Object> asMap() throws ResponseParseException;
-
-
 }

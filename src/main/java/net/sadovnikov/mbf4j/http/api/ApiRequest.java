@@ -4,6 +4,7 @@ import net.sadovnikov.mbf4j.http.HttpRequest;
 import net.sadovnikov.mbf4j.http.JsonResponse;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 
 public class ApiRequest {
 
@@ -29,6 +30,10 @@ public class ApiRequest {
 
     public ApiResponse response() throws ResponseParseException {
         return new JsonResponse(this.httpRequest.response());
+    }
+
+    public <T> TypedApiResponse<T> response(Class<T> typeClass) {
+        return new TypedApiResponse<T>(this.httpRequest.response());
     }
 
     private final HttpRequest enformHttpRequest() {

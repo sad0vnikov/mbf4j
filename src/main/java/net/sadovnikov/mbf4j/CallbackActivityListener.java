@@ -1,12 +1,16 @@
 package net.sadovnikov.mbf4j;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import net.sadovnikov.mbf4j.activities.Activity;
+import net.sadovnikov.mbf4j.activities.incoming.IncomingActivity;
+import net.sadovnikov.mbf4j.activities.incoming.IncomingMessage;
 import net.sadovnikov.mbf4j.http.server.HttpEndpoint;
 import net.sadovnikov.mbf4j.http.server.HttpHandler;
 import net.sadovnikov.mbf4j.http.server.HttpRequest;
 import net.sadovnikov.mbf4j.http.server.HttpResponse;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -23,27 +27,21 @@ public class CallbackActivityListener extends HttpHandler {
     @Override
     public HttpResponse handle(HttpRequest request) {
         String requestBody = request.getBody();
-        JSONParser jsonParser = new JSONParser();
+        Gson gson = new Gson();
 
         String responseStatus = "OK";
         int httpStatus = HttpResponse.STATUS_OK;
-        try {
-            JSONObject jsonRequest = (JSONObject) jsonParser.parse(requestBody);
-            String activityType = (String) jsonRequest.get("type");
-            String activityId = (String) jsonRequest.get("id");
+        Activity activity = gson.fromJson(requestBody, Activity.class);
 
-            Activity activity = new Activity(activityType, activityId);
-
+        if (activity.isMessage()) {
+            IncomingMessage message = gson.fromJson(requestBody, IncomingMessage.class);
             activityHandlers.stream()
-                    .forEach((IncomingActivityHandler handler) -> handler.handle(activity));
-
-        } catch (ParseException e) {
-            responseStatus = "error";
-            httpStatus = HttpResponse.STATUS_BAD_REQUEST;
+                    .filter((IncomingActivityHandler handler) -> handler.checkCanHandle(message.getClass()))
+                    .forEach((IncomingActivityHandler handler) -> handler.handle(message));
         }
 
-        JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put("status", responseStatus);
-        return new HttpResponse(jsonResponse.toJSONString(), httpStatus);
+        JsonObject jsonResponse =  new JsonObject();
+        jsonResponse.addProperty("status", responseStatus);
+        return new HttpResponse(jsonResponse.toString(), httpStatus);
     }
 }

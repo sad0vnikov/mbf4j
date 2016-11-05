@@ -28,7 +28,7 @@ public class Bot {
         return this;
     }
 
-    public Bot onActivityReceived(IncomingActivityHandler handler) {
+    public Bot onActivityReceived(IncomingActivityHandler<?> handler) {
         callbackActivityListener.addActivityHandler(handler);
         return this;
     }
