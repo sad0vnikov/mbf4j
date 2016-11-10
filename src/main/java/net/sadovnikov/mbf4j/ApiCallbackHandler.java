@@ -1,11 +1,14 @@
 package net.sadovnikov.mbf4j;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import net.sadovnikov.mbf4j.activities.Activity;
-import net.sadovnikov.mbf4j.activities.incoming.IncomingActivity;
 import net.sadovnikov.mbf4j.activities.incoming.IncomingMessage;
+import net.sadovnikov.mbf4j.events.ActivityEvent;
+import net.sadovnikov.mbf4j.events.EventBroker;
+import net.sadovnikov.mbf4j.events.EventTypes;
+import net.sadovnikov.mbf4j.http.api.deserializers.IncomingMessageDeserializer;
 import net.sadovnikov.mbf4j.http.server.HttpEndpoint;
 import net.sadovnikov.mbf4j.http.server.HttpHandler;
 import net.sadovnikov.mbf4j.http.server.HttpRequest;
@@ -16,28 +19,34 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @HttpEndpoint("/api/messages")
-public class CallbackActivityListener extends HttpHandler {
+public class ApiCallbackHandler extends HttpHandler {
 
-    protected List<IncomingActivityHandler> activityHandlers = new CopyOnWriteArrayList<>();
+    protected GsonBuilder gsonBuilder;
+    protected EventBroker botEventBroker;
 
-    public void addActivityHandler(IncomingActivityHandler handler) {
-        activityHandlers.add(handler);
+    public ApiCallbackHandler(EventBroker eventBroker) {
+        this.botEventBroker = eventBroker;
+        gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(IncomingMessage.class, new IncomingMessageDeserializer());
     }
 
     @Override
     public HttpResponse handle(HttpRequest request) {
         String requestBody = request.getBody();
-        Gson gson = new Gson();
+        Gson gson = gsonBuilder.create();
 
         String responseStatus = "OK";
         int httpStatus = HttpResponse.STATUS_OK;
         Activity activity = gson.fromJson(requestBody, Activity.class);
 
         if (activity.isMessage()) {
-            IncomingMessage message = gson.fromJson(requestBody, IncomingMessage.class);
-            activityHandlers.stream()
-                    .filter((IncomingActivityHandler handler) -> handler.checkCanHandle(message.getClass()))
-                    .forEach((IncomingActivityHandler handler) -> handler.handle(message));
+            try {
+                IncomingMessage message = gson.fromJson(requestBody, IncomingMessage.class);
+                botEventBroker.publishEvent(new ActivityEvent<>(EventTypes.EVENT_TYPE_INCOMING_MESSAGE, message));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
 
         JsonObject jsonResponse =  new JsonObject();

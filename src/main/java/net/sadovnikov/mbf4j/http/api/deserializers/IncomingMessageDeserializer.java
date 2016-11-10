@@ -21,7 +21,7 @@ public class IncomingMessageDeserializer implements JsonDeserializer<IncomingMes
         );
 
         if (object.has("timestamp")) {
-            message.withText(object.get("timestamp").getAsString());
+            message.withTimestamp(object.get("timestamp").getAsString());
         }
 
         if (object.has("serviceUrl")) {
@@ -29,11 +29,11 @@ public class IncomingMessageDeserializer implements JsonDeserializer<IncomingMes
         }
 
         if (object.has("summary")) {
-            message.withServiceUrl(object.get("summary").getAsString());
+            message.withSummary(object.get("summary").getAsString());
         }
 
         if (object.has("text")) {
-            message.withServiceUrl(object.get("text").getAsString());
+            message.withText(object.get("text").getAsString());
         }
 
         return message;

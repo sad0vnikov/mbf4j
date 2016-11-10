@@ -1,5 +1,8 @@
 package net.sadovnikov.mbf4j;
 
+import net.sadovnikov.mbf4j.activities.incoming.IncomingActivity;
+import net.sadovnikov.mbf4j.events.EventBroker;
+import net.sadovnikov.mbf4j.events.EventTypes;
 import net.sadovnikov.mbf4j.http.api.ApiRequestFactory;
 import net.sadovnikov.mbf4j.http.api.oauth.OAuthApiRequestFactory;
 import net.sadovnikov.mbf4j.http.api.oauth.SkypeOAuthManager;
@@ -15,7 +18,8 @@ public class Bot {
     protected ApiRequestFactory apiRequestFactory;
 
     protected HttpServer httpServer;
-    protected CallbackActivityListener callbackActivityListener = new CallbackActivityListener();
+    protected EventBroker eventBroker = new EventBroker();
+    protected ApiCallbackHandler apiCallbackHandler = new ApiCallbackHandler(eventBroker);
 
     protected String clientId;
     protected String clientSecret;
@@ -28,8 +32,8 @@ public class Bot {
         return this;
     }
 
-    public Bot onActivityReceived(IncomingActivityHandler<?> handler) {
-        callbackActivityListener.addActivityHandler(handler);
+    public <T extends IncomingActivity> Bot on(EventTypes type, IncomingActivityListener<T> listener) {
+        eventBroker.addListener(type, listener);
         return this;
     }
 
@@ -43,7 +47,7 @@ public class Bot {
             httpServer = new DefaultHttpServer(DEFAULT_HTTP_PORT);
         }
 
-        httpServer.addHandler(callbackActivityListener);
+        httpServer.addHandler(apiCallbackHandler);
 
         if (apiRequestFactory == null) {
             SkypeOAuthManager oAuthManager = new SkypeOAuthManager(clientId, clientSecret);
