@@ -2,6 +2,7 @@ package net.sadovnikov.mbf4j.activities.incoming;
 
 
 import net.sadovnikov.mbf4j.Address;
+import net.sadovnikov.mbf4j.http.Conversation;
 
 import java.util.Optional;
 
@@ -14,10 +15,11 @@ public class IncomingMessage extends IncomingActivity {
     protected String summary = null;
     protected String channelId = null;
     protected String text = null;
+    protected Conversation conversation;
 
-    public IncomingMessage(String type, String id, Address from, Address to, String channelId) {
+    public IncomingMessage(String type, String id, Address from, Address to, Conversation conversation) {
         super(type, id, from, to);
-        this.channelId = channelId;
+        this.conversation = conversation;
     }
 
 
@@ -57,6 +59,18 @@ public class IncomingMessage extends IncomingActivity {
         return this;
     }
 
+    public String channelId() {
+        return channelId;
+    }
+
+    public IncomingMessage withChannelId(String channelId) {
+        this.channelId = channelId;
+        return this;
+    }
+
+    public Conversation conversation() {
+        return conversation;
+    }
 
     @Override
     public boolean isMessage() {

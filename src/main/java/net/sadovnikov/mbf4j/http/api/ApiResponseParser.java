@@ -3,11 +3,14 @@ package net.sadovnikov.mbf4j.http.api;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import net.sadovnikov.mbf4j.http.api.response.ApiResponse;
 
-public class TypedApiResponse<T> extends ApiResponse {
+public class ApiResponseParser<T> {
 
-    public TypedApiResponse(String response) {
-        super(response);
+    String response;
+
+    public ApiResponseParser(String response) {
+        this.response = response;
     }
 
     public T getObject(Class<T> typeParameterClass) throws ResponseParseException {

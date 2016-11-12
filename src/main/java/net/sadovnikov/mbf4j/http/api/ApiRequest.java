@@ -1,50 +1,70 @@
 package net.sadovnikov.mbf4j.http.api;
 
+import net.sadovnikov.mbf4j.ApiException;
+import net.sadovnikov.mbf4j.http.HttpException;
 import net.sadovnikov.mbf4j.http.HttpRequest;
-import net.sadovnikov.mbf4j.http.JsonResponse;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
+public abstract class ApiRequest {
 
-public class ApiRequest {
-
-    private final String host = "apis.skype.com";
-    private final int apiPort = 80;
+    protected String host = "apis.skype.com";
+    protected int apiPort = 80;
 
     protected String endpoint;
+    protected String body;
     protected HttpRequest httpRequest;
-
 
     protected String response;
 
-    public ApiRequest(String endpoint) {
+    public ApiRequest(String endpoint, String body) {
         this.endpoint = endpoint;
+        this.body = body;
         this.httpRequest = enformHttpRequest();
     }
 
-    public ApiRequest execute() throws IOException {
-        httpRequest.post();
-        return this;
+    public ApiRequest(String endpoint) {
+        this(endpoint, "");
     }
 
-
-    public ApiResponse response() throws ResponseParseException {
-        return new JsonResponse(this.httpRequest.response());
+    public HttpRequest httpRequest() {
+        return httpRequest;
     }
 
-    public <T> TypedApiResponse<T> response(Class<T> typeClass) {
-        return new TypedApiResponse<T>(this.httpRequest.response());
+    public abstract ApiRequest execute() throws ApiException, HttpException;
+
+    public <T> T response(Class<T> typeClass) throws ResponseParseException {
+        ApiResponseParser<T> parser  = new ApiResponseParser<T>(this.httpRequest.responseBody());
+        return parser.getObject(typeClass);
     }
 
-    private final HttpRequest enformHttpRequest() {
-        return new HttpRequest(getApiHost() + ":" + getApiHost() + "/" + endpoint);
+    protected final HttpRequest enformHttpRequest() {
+        HttpRequest httpRequest = new HttpRequest(getProtocol() + getApiHost() + ":" + getApiPort() + "/" + getApiVersion() + endpoint, body);
+        httpRequest.addHeader("Content-Type", "application/json");
+        httpRequest.addHeader("Charset", "utf-8");
+
+        return httpRequest;
     }
 
-    protected String getApiHost() {
+    public String getApiHost() {
         return host;
     }
 
-    protected int getApiPort() {
+    public int getApiPort() {
         return apiPort;
     }
+
+    public void setApiPort(int apiPort) {
+        this.apiPort = apiPort;
+        httpRequest = enformHttpRequest();
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+        httpRequest = enformHttpRequest();
+    }
+
+    protected String getProtocol() {
+        return "http://";
+    }
+
+    protected String getApiVersion() { return "v3"; }
 }

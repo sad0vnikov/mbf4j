@@ -13,4 +13,8 @@ public class Activity {
         Matcher matcher = regexp.matcher(type);
         return matcher.matches();
     }
+
+    public String type() {
+        return type;
+    }
 }

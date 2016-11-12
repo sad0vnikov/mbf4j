@@ -8,15 +8,11 @@ import net.sadovnikov.mbf4j.activities.incoming.IncomingMessage;
 import net.sadovnikov.mbf4j.events.ActivityEvent;
 import net.sadovnikov.mbf4j.events.EventBroker;
 import net.sadovnikov.mbf4j.events.EventTypes;
-import net.sadovnikov.mbf4j.http.api.deserializers.IncomingMessageDeserializer;
+import net.sadovnikov.mbf4j.http.api.gson.deserializers.IncomingMessageDeserializer;
 import net.sadovnikov.mbf4j.http.server.HttpEndpoint;
 import net.sadovnikov.mbf4j.http.server.HttpHandler;
 import net.sadovnikov.mbf4j.http.server.HttpRequest;
 import net.sadovnikov.mbf4j.http.server.HttpResponse;
-
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @HttpEndpoint("/api/messages")
 public class ApiCallbackHandler extends HttpHandler {

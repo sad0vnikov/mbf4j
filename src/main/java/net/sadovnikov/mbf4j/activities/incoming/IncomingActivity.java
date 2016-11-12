@@ -18,4 +18,15 @@ public class IncomingActivity extends Activity {
         this.recepient = recepient;
     }
 
+    public String id() {
+        return id;
+    }
+
+    public Address from() {
+        return from;
+    }
+
+    public Address recepient() {
+        return recepient;
+    }
 }

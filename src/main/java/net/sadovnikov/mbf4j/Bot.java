@@ -4,8 +4,7 @@ import net.sadovnikov.mbf4j.activities.incoming.IncomingActivity;
 import net.sadovnikov.mbf4j.events.EventBroker;
 import net.sadovnikov.mbf4j.events.EventTypes;
 import net.sadovnikov.mbf4j.http.api.ApiRequestFactory;
-import net.sadovnikov.mbf4j.http.api.oauth.OAuthApiRequestFactory;
-import net.sadovnikov.mbf4j.http.api.oauth.SkypeOAuthManager;
+import net.sadovnikov.mbf4j.http.api.emulator.EmulatorApiRequestFactory;
 import net.sadovnikov.mbf4j.http.server.impl.DefaultHttpServer;
 import net.sadovnikov.mbf4j.http.server.HttpServer;
 
@@ -24,6 +23,7 @@ public class Bot {
     protected String clientId;
     protected String clientSecret;
     protected String callbackUri;
+    protected String botName = "mbf4j bot";
 
 
     public Bot setHttpServer(HttpServer server) {
@@ -42,6 +42,16 @@ public class Bot {
         return this;
     }
 
+    public Bot setBotName(String botName) {
+        this.botName = botName;
+        return this;
+    }
+
+    public MessageSender messageSender() {
+        return new MessageSender(apiRequestFactory, botName);
+    }
+
+
     public void init() throws IOException {
         if (httpServer == null) {
             httpServer = new DefaultHttpServer(DEFAULT_HTTP_PORT);
@@ -50,8 +60,7 @@ public class Bot {
         httpServer.addHandler(apiCallbackHandler);
 
         if (apiRequestFactory == null) {
-            SkypeOAuthManager oAuthManager = new SkypeOAuthManager(clientId, clientSecret);
-            apiRequestFactory = new OAuthApiRequestFactory(oAuthManager);
+            apiRequestFactory = new EmulatorApiRequestFactory();
         }
 
         httpServer.start();

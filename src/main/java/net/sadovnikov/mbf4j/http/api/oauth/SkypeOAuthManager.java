@@ -1,6 +1,7 @@
 package net.sadovnikov.mbf4j.http.api.oauth;
 
 
+import net.sadovnikov.mbf4j.http.HttpException;
 import net.sadovnikov.mbf4j.http.HttpRequest;
 
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class SkypeOAuthManager {
         protected long tokenExpiresIn;
         protected long tokenGrantTime;
 
-        public String getAccessToken() throws IOException {
+        public String getAccessToken() throws HttpException {
             long now = System.currentTimeMillis() / 1000L;
             if (accessToken == null || tokenGrantTime + tokenExpiresIn >= now) {
                 accessToken = requestAccessToken();
@@ -41,7 +42,7 @@ public class SkypeOAuthManager {
             return accessToken;
         }
 
-        protected String requestAccessToken() throws IOException {
+        protected String requestAccessToken() throws HttpException {
             String requestUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/token?" +
                     "client_id=" + clientId +
                     "&client_secret=" + clientSecret +
@@ -50,7 +51,7 @@ public class SkypeOAuthManager {
             HttpRequest request = new HttpRequest(requestUrl);
             request.get();
 
-            return request.response();
+            return request.responseBody();
         }
     }
 }
