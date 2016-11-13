@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import net.sadovnikov.mbf4j.http.api.response.ApiResponse;
 
-public class ApiResponseParser<T> {
+public class ApiResponseParser {
 
     String response;
 
@@ -13,7 +13,7 @@ public class ApiResponseParser<T> {
         this.response = response;
     }
 
-    public T getObject(Class<T> typeParameterClass) throws ResponseParseException {
+    public <T> T getObject(Class<T> typeParameterClass) throws ResponseParseException {
         try {
             Gson gson  = new Gson();
             T result = gson.fromJson(response, typeParameterClass);

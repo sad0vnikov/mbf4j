@@ -3,23 +3,21 @@ package net.sadovnikov.mbf4j.http.api.oauth;
 
 import net.sadovnikov.mbf4j.ApiException;
 import net.sadovnikov.mbf4j.http.HttpException;
-import net.sadovnikov.mbf4j.http.HttpRequest;
 import net.sadovnikov.mbf4j.http.api.ApiRequest;
-import net.sadovnikov.mbf4j.http.api.ApiRequestDecorator;
-import net.sadovnikov.mbf4j.http.api.response.ApiResponse;
+import net.sadovnikov.mbf4j.http.api.ApiResponseParser;
+import net.sadovnikov.mbf4j.http.api.Request;
 
-import java.io.IOException;
-
-public class OAuthApiRequestDecorator extends ApiRequestDecorator {
+public class OAuthApiRequestDecorator implements Request {
 
     protected SkypeOAuthManager oAuthManager;
+    protected ApiRequest request;
 
-    public OAuthApiRequestDecorator(SkypeOAuthManager oAuthManager) {
+    public OAuthApiRequestDecorator(SkypeOAuthManager oAuthManager, ApiRequest request) {
         this.oAuthManager = oAuthManager;
+        this.request = request;
     }
 
-    @Override
-    public ApiRequest execute(ApiRequest request) throws ApiException,HttpException {
+    public ApiResponseParser execute() throws ApiException,HttpException {
 
         try {
             SkypeOAuthManager.SkypeOAuthSession oAuthSession = oAuthManager.getSession();
@@ -29,8 +27,6 @@ public class OAuthApiRequestDecorator extends ApiRequestDecorator {
             throw new ApiException(e);
         }
 
-        request.execute();
-
-        return request;
+        return request.execute();
     }
 }

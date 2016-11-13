@@ -2,11 +2,11 @@ package net.sadovnikov.mbf4j.http.api;
 
 public abstract class ApiRequestFactory {
 
-    public abstract ApiRequest get(String url);
+    public abstract Request get(String url);
 
-    public abstract ApiRequest post(String url, String body);
+    public abstract Request post(String url, String body);
 
-    public abstract ApiRequest put(String url);
+    public abstract Request put(String url);
 
-    public abstract ApiRequest delete(String url);
+    public abstract Request delete(String url);
 }

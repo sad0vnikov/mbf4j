@@ -4,7 +4,7 @@ import net.sadovnikov.mbf4j.ApiException;
 import net.sadovnikov.mbf4j.http.HttpException;
 import net.sadovnikov.mbf4j.http.HttpRequest;
 
-public abstract class ApiRequest {
+public abstract class ApiRequest implements Request {
 
     protected String host = "apis.skype.com";
     protected int apiPort = 80;
@@ -29,12 +29,9 @@ public abstract class ApiRequest {
         return httpRequest;
     }
 
-    public abstract ApiRequest execute() throws ApiException, HttpException;
+    public abstract ApiResponseParser execute() throws ApiException, HttpException;
 
-    public <T> T response(Class<T> typeClass) throws ResponseParseException {
-        ApiResponseParser<T> parser  = new ApiResponseParser<T>(this.httpRequest.responseBody());
-        return parser.getObject(typeClass);
-    }
+
 
     protected final HttpRequest enformHttpRequest() {
         HttpRequest httpRequest = new HttpRequest(getProtocol() + getApiHost() + ":" + getApiPort() + "/" + getApiVersion() + endpoint, body);

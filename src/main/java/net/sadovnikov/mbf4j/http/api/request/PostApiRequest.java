@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import net.sadovnikov.mbf4j.ApiException;
 import net.sadovnikov.mbf4j.http.HttpException;
 import net.sadovnikov.mbf4j.http.api.ApiRequest;
+import net.sadovnikov.mbf4j.http.api.ApiResponseParser;
 import net.sadovnikov.mbf4j.http.api.response.ApiResponse;
 import net.sadovnikov.mbf4j.http.api.response.ErrorApiResponse;
 
@@ -18,7 +19,7 @@ public class PostApiRequest extends ApiRequest {
     }
 
     @Override
-    public PostApiRequest execute() throws ApiException, HttpException {
+    public ApiResponseParser execute() throws ApiException, HttpException {
         httpRequest().post();
         int responseCode = httpRequest.responseCode();
         if (responseCode != httpRequest.STATUS_OK && responseCode != httpRequest.STATUS_CREATED && responseCode != httpRequest.STATUS_ACCEPTED) {
@@ -26,7 +27,7 @@ public class PostApiRequest extends ApiRequest {
             ErrorApiResponse response = gson.fromJson(httpRequest.responseBody(), ErrorApiResponse.class);
             throw new ApiException(httpRequest.responseBody());
         }
-        return this;
+        return new ApiResponseParser(httpRequest.responseBody());
 
     }
 }

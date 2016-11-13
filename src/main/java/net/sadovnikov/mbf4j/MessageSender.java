@@ -8,6 +8,7 @@ import net.sadovnikov.mbf4j.activities.outcoming.SentMessage;
 import net.sadovnikov.mbf4j.http.HttpException;
 import net.sadovnikov.mbf4j.http.api.ApiRequest;
 import net.sadovnikov.mbf4j.http.api.ApiRequestFactory;
+import net.sadovnikov.mbf4j.http.api.Request;
 import net.sadovnikov.mbf4j.http.api.ResponseParseException;
 import net.sadovnikov.mbf4j.http.api.gson.serializers.MessageToSendSerializer;
 import net.sadovnikov.mbf4j.http.api.response.IdApiResponse;
@@ -33,10 +34,9 @@ public class MessageSender {
         Gson gson = gsonBuilder.create();
         message.withFrom(new Address(null, botName));
 
-        ApiRequest request = requestFactory.post("/conversations/" + message.conversation().id() + "/activities", gson.toJson(message));
+        Request request = requestFactory.post("/conversations/" + message.conversation().id() + "/activities", gson.toJson(message));
         try {
-            request.execute();
-            IdApiResponse id = request.response(IdApiResponse.class);
+            IdApiResponse id = request.execute().getObject(IdApiResponse.class);
             return new SentMessage(message, id.id());
 
         } catch (ResponseParseException e) {
