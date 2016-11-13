@@ -4,14 +4,18 @@ import net.sadovnikov.mbf4j.ApiException;
 import net.sadovnikov.mbf4j.http.HttpException;
 import net.sadovnikov.mbf4j.http.HttpRequest;
 
+import java.util.Optional;
+
 public abstract class ApiRequest implements Request {
 
     protected String host = "apis.skype.com";
-    protected int apiPort = 80;
+    protected Optional<Integer> apiPort = Optional.empty();
 
     protected String endpoint;
     protected String body;
     protected HttpRequest httpRequest;
+
+    protected boolean isHTTPS = false;
 
     protected String response;
 
@@ -34,7 +38,7 @@ public abstract class ApiRequest implements Request {
 
 
     protected final HttpRequest enformHttpRequest() {
-        HttpRequest httpRequest = new HttpRequest(getProtocol() + getApiHost() + ":" + getApiPort() + "/" + getApiVersion() + endpoint, body);
+        HttpRequest httpRequest = new HttpRequest(getProtocol() + getApiHost() + ":" + getApiPort() + endpoint, body);
         httpRequest.addHeader("Content-Type", "application/json");
         httpRequest.addHeader("Charset", "utf-8");
 
@@ -46,22 +50,39 @@ public abstract class ApiRequest implements Request {
     }
 
     public int getApiPort() {
-        return apiPort;
+
+        if (apiPort.isPresent()) {
+            return apiPort.get();
+        }
+
+        int port = 80;
+        if (isHTTPS) {
+            port = 443;
+        }
+
+        return port;
     }
 
-    public void setApiPort(int apiPort) {
-        this.apiPort = apiPort;
+    public ApiRequest setApiPort(int apiPort) {
+        this.apiPort = Optional.of(apiPort);
         httpRequest = enformHttpRequest();
+        return this;
     }
 
-    public void setHost(String host) {
+    public ApiRequest setHost(String host) {
         this.host = host;
         httpRequest = enformHttpRequest();
+        return this;
+    }
+
+
+    public ApiRequest setHttps(boolean isHTTPS) {
+        this.isHTTPS = isHTTPS;
+        httpRequest = enformHttpRequest();
+        return this;
     }
 
     protected String getProtocol() {
-        return "http://";
+        return isHTTPS ? "https://" : "http://";
     }
-
-    protected String getApiVersion() { return "v3"; }
 }

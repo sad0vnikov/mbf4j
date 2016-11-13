@@ -6,13 +6,14 @@ import net.sadovnikov.mbf4j.http.HttpException;
 import net.sadovnikov.mbf4j.http.api.ApiRequest;
 import net.sadovnikov.mbf4j.http.api.ApiResponseParser;
 import net.sadovnikov.mbf4j.http.api.Request;
+import net.sadovnikov.mbf4j.http.api.ResponseParseException;
 
 public class OAuthApiRequestDecorator implements Request {
 
-    protected SkypeOAuthManager oAuthManager;
+    protected OAuthManager oAuthManager;
     protected ApiRequest request;
 
-    public OAuthApiRequestDecorator(SkypeOAuthManager oAuthManager, ApiRequest request) {
+    public OAuthApiRequestDecorator(OAuthManager oAuthManager, ApiRequest request) {
         this.oAuthManager = oAuthManager;
         this.request = request;
     }
@@ -20,10 +21,10 @@ public class OAuthApiRequestDecorator implements Request {
     public ApiResponseParser execute() throws ApiException,HttpException {
 
         try {
-            SkypeOAuthManager.SkypeOAuthSession oAuthSession = oAuthManager.getSession();
+            OAuthManager.SkypeOAuthSession oAuthSession = oAuthManager.getSession();
             request.httpRequest().addHeader("Authorization", "Bearer " + oAuthSession.getAccessToken());
 
-        } catch (HttpException e) {
+        } catch (ResponseParseException e) {
             throw new ApiException(e);
         }
 

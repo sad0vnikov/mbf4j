@@ -1,6 +1,9 @@
 package net.sadovnikov.mbf4j.http;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.*;
 import java.util.HashMap;
@@ -31,6 +34,8 @@ public class HttpRequest {
     public final int STATUS_ERROR = 500;
     public final int STATUS_UNAVAILABLE = 503;
 
+
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     public HttpRequest(String url, String body, Map<String,String> headers) {
 
@@ -87,6 +92,9 @@ public class HttpRequest {
     protected void execute(methods method) throws HttpException {
         try {
 
+            logger.debug("executing " + method.name() + " HTTP request to " + urlString.toString());
+            logger.debug("request body = " + body);
+
             URL urlObj = new URL(this.urlString.toString());
             HttpURLConnection connection = (HttpURLConnection) urlObj.openConnection();
             connection.setRequestMethod(method.name());
@@ -129,6 +137,7 @@ public class HttpRequest {
             connection.disconnect();
 
             this.response = response.toString();
+            logger.debug("got HTTP response: " + this.response);
         } catch (Exception e) {
             throw new HttpException(e);
         }

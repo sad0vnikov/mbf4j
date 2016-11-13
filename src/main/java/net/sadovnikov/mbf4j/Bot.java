@@ -4,27 +4,29 @@ import net.sadovnikov.mbf4j.activities.incoming.IncomingActivity;
 import net.sadovnikov.mbf4j.events.EventBroker;
 import net.sadovnikov.mbf4j.events.EventTypes;
 import net.sadovnikov.mbf4j.http.api.ApiRequestFactory;
+import net.sadovnikov.mbf4j.http.api.DefaultRequestFactory;
 import net.sadovnikov.mbf4j.http.api.emulator.EmulatorApiRequestFactory;
+import net.sadovnikov.mbf4j.http.api.oauth.OAuthManager;
 import net.sadovnikov.mbf4j.http.server.impl.DefaultHttpServer;
 import net.sadovnikov.mbf4j.http.server.HttpServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class Bot {
 
     protected static final int DEFAULT_HTTP_PORT = 3978;
 
-    protected ApiRequestFactory apiRequestFactory;
+    protected ApiRequestFactory apiRequestFactory = new DefaultRequestFactory();
 
     protected HttpServer httpServer;
     protected EventBroker eventBroker = new EventBroker();
     protected ApiCallbackHandler apiCallbackHandler = new ApiCallbackHandler(eventBroker);
 
-    protected String clientId;
-    protected String clientSecret;
-    protected String callbackUri;
+    protected Optional<String> clientId = Optional.empty();
+    protected Optional<String> clientSecret = Optional.empty();
     protected String botName = "mbf4j bot";
 
     Logger logger = LoggerFactory.getLogger(getClass());
@@ -43,12 +45,22 @@ public class Bot {
 
     public Bot setApiRequestFactory(ApiRequestFactory factory) {
         this.apiRequestFactory = factory;
+        if (clientSecret.isPresent() && clientId.isPresent()) {
+            factory.withOauth(new OAuthManager(clientId.get(), clientSecret.get()));
+        }
         logger.info("using " + factory.getClass().getName() + " api request factory");
         return this;
     }
 
     public Bot setBotName(String botName) {
         this.botName = botName;
+        return this;
+    }
+
+    public Bot setCredentials(String clientId, String clientSecret) {
+        this.clientId = Optional.of(clientId);
+        this.clientSecret = Optional.of(clientSecret);
+        apiRequestFactory.withOauth(new OAuthManager(clientId, clientSecret));
         return this;
     }
 
