@@ -15,6 +15,8 @@ public abstract class HttpServer {
 
     public abstract void stop();
 
+    public abstract int port();
+
 }
 
 

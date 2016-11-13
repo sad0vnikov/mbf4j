@@ -13,12 +13,16 @@ import net.sadovnikov.mbf4j.http.server.HttpEndpoint;
 import net.sadovnikov.mbf4j.http.server.HttpHandler;
 import net.sadovnikov.mbf4j.http.server.HttpRequest;
 import net.sadovnikov.mbf4j.http.server.HttpResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @HttpEndpoint("/api/messages")
 public class ApiCallbackHandler extends HttpHandler {
 
     protected GsonBuilder gsonBuilder;
     protected EventBroker botEventBroker;
+
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     public ApiCallbackHandler(EventBroker eventBroker) {
         this.botEventBroker = eventBroker;
@@ -31,18 +35,18 @@ public class ApiCallbackHandler extends HttpHandler {
         String requestBody = request.getBody();
         Gson gson = gsonBuilder.create();
 
+        logger.debug("got http request: " + requestBody);
+        logger.info("got incoming activity via http webhook");
+
         String responseStatus = "OK";
         int httpStatus = HttpResponse.STATUS_OK;
         Activity activity = gson.fromJson(requestBody, Activity.class);
 
         if (activity.isMessage()) {
-            try {
-                IncomingMessage message = gson.fromJson(requestBody, IncomingMessage.class);
-                botEventBroker.publishEvent(new ActivityEvent<>(EventTypes.EVENT_TYPE_INCOMING_MESSAGE, message));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
+            IncomingMessage message = gson.fromJson(requestBody, IncomingMessage.class);
+            logger.info("got incoming message from " + message.from().name + " (id = " + message.from().id()
+                    + "), channel_id = " + message.channelId() + ", text = " + message.text().get());
+            botEventBroker.publishEvent(new ActivityEvent<>(EventTypes.EVENT_TYPE_INCOMING_MESSAGE, message));
         }
 
         JsonObject jsonResponse =  new JsonObject();

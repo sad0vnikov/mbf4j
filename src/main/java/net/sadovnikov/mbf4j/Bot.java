@@ -7,6 +7,8 @@ import net.sadovnikov.mbf4j.http.api.ApiRequestFactory;
 import net.sadovnikov.mbf4j.http.api.emulator.EmulatorApiRequestFactory;
 import net.sadovnikov.mbf4j.http.server.impl.DefaultHttpServer;
 import net.sadovnikov.mbf4j.http.server.HttpServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -25,6 +27,8 @@ public class Bot {
     protected String callbackUri;
     protected String botName = "mbf4j bot";
 
+    Logger logger = LoggerFactory.getLogger(getClass());
+
 
     public Bot setHttpServer(HttpServer server) {
         this.httpServer = server;
@@ -39,6 +43,7 @@ public class Bot {
 
     public Bot setApiRequestFactory(ApiRequestFactory factory) {
         this.apiRequestFactory = factory;
+        logger.info("using " + factory.getClass().getName() + " api request factory");
         return this;
     }
 
@@ -64,5 +69,6 @@ public class Bot {
         }
 
         httpServer.start();
+        logger.info("listening to HTTP callbacks at :" + httpServer.port());
     }
 }
