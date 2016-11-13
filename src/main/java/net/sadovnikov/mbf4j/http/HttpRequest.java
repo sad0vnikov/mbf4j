@@ -144,4 +144,7 @@ public class HttpRequest {
 
     }
 
+    public String urlString() {
+        return urlString.toString();
+    }
 }
