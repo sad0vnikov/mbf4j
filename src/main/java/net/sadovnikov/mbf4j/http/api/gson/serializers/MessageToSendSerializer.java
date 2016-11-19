@@ -6,6 +6,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import net.sadovnikov.mbf4j.Address;
 import net.sadovnikov.mbf4j.activities.outcoming.MessageToSend;
+import net.sadovnikov.mbf4j.http.Conversation;
 
 import java.lang.reflect.Type;
 
@@ -20,7 +21,8 @@ public class MessageToSendSerializer implements JsonSerializer<MessageToSend> {
                 text -> root.addProperty("text", text)
         );
 
-        root.add("recepient", context.serialize(messageToSend.recepient(), Address.class));
+        root.add("recipient", context.serialize(messageToSend.recipient(), Address.class));
+        root.add("conversation", context.serialize(messageToSend.conversation(), Conversation.class));
 
         messageToSend.from().ifPresent(
                 from -> root.add("from", context.serialize(from, Address.class))

@@ -1,6 +1,7 @@
 package net.sadovnikov.mbf4j.http.api.emulator;
 
 
+import net.sadovnikov.mbf4j.Channel;
 import net.sadovnikov.mbf4j.http.api.ApiRequest;
 import net.sadovnikov.mbf4j.http.api.ApiRequestFactory;
 import net.sadovnikov.mbf4j.http.api.Request;
@@ -28,12 +29,12 @@ public class EmulatorApiRequestFactory extends ApiRequestFactory {
     }
 
     @Override
-    public ApiRequest get(String url) {
+    public ApiRequest get(Channel channel, String url) {
         return null;
     }
 
     @Override
-    public Request post(String url, String body) {
+    public Request post(Channel channel, String url, String body) {
         ApiRequest request = new PostApiRequest("/v3" + url, body);
         request.setHost(emulatorHost);
         request.setApiPort(emulatorPort);
@@ -46,12 +47,12 @@ public class EmulatorApiRequestFactory extends ApiRequestFactory {
     }
 
     @Override
-    public ApiRequest put(String url) {
+    public ApiRequest put(Channel channel, String url) {
         return null;
     }
 
     @Override
-    public ApiRequest delete(String url) {
+    public ApiRequest delete(Channel channel, String url) {
         return null;
     }
 }

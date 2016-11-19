@@ -13,7 +13,6 @@ public class IncomingMessage extends IncomingActivity {
     protected String serviceUrl = null;
     protected String timestamp = null;
     protected String summary = null;
-    protected String channelId = null;
     protected String text = null;
     protected Conversation conversation;
 
@@ -23,9 +22,6 @@ public class IncomingMessage extends IncomingActivity {
     }
 
 
-    public Optional<String> serviceUrl() {
-        return Optional.ofNullable(channelId);
-    }
 
     public IncomingMessage withServiceUrl(String serviceUrl) {
         this.serviceUrl = serviceUrl;
@@ -56,15 +52,6 @@ public class IncomingMessage extends IncomingActivity {
 
     public IncomingMessage withText(String text) {
         this.text = text;
-        return this;
-    }
-
-    public String channelId() {
-        return channelId;
-    }
-
-    public IncomingMessage withChannelId(String channelId) {
-        this.channelId = channelId;
         return this;
     }
 

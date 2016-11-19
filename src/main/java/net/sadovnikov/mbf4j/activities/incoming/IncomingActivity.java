@@ -2,6 +2,7 @@ package net.sadovnikov.mbf4j.activities.incoming;
 
 
 import net.sadovnikov.mbf4j.Address;
+import net.sadovnikov.mbf4j.Channel;
 import net.sadovnikov.mbf4j.activities.Activity;
 
 public class IncomingActivity extends Activity {
@@ -9,13 +10,14 @@ public class IncomingActivity extends Activity {
     protected String type;
     protected String id;
     protected Address from;
-    protected Address recepient;
+    protected Address recipient;
+    protected Channel channel;
 
     public IncomingActivity(String type, String id, Address from, Address recepient) {
         this.type = type;
         this.id = id;
         this.from = from;
-        this.recepient = recepient;
+        this.recipient = recepient;
     }
 
     public String id() {
@@ -26,7 +28,16 @@ public class IncomingActivity extends Activity {
         return from;
     }
 
-    public Address recepient() {
-        return recepient;
+    public Address recipient() {
+        return recipient;
+    }
+
+    public IncomingActivity withChannel(Channel channel) {
+        this.channel = channel;
+        return this;
+    }
+
+    public Channel channel() {
+        return channel;
     }
 }

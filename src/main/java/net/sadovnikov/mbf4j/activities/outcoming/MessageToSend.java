@@ -2,6 +2,7 @@ package net.sadovnikov.mbf4j.activities.outcoming;
 
 
 import net.sadovnikov.mbf4j.Address;
+import net.sadovnikov.mbf4j.Channel;
 import net.sadovnikov.mbf4j.activities.Activity;
 import net.sadovnikov.mbf4j.http.Conversation;
 
@@ -11,26 +12,25 @@ public class MessageToSend extends Activity {
 
 
     protected String text;
-    protected Address recepient;
+    protected Address recipient;
     protected Address from;
     protected Conversation conversation;
-    protected String channelId;
+    protected Channel channel;
 
     public final String TYPE_TEXT = "message";
 
-    public MessageToSend(Conversation conversation, Address address, String text) {
+    public MessageToSend(Channel channel, Conversation conversation, Address address, String text) {
         type = TYPE_TEXT;
         this.text = text;
-        this.recepient = address;
+        this.recipient = address;
         this.conversation = conversation;
+        this.channel = channel;
     }
 
-    public void withChannelId(String channelId) {
-        this.channelId = channelId;
-    }
+    public Channel channel() { return channel; }
 
-    public Address recepient() {
-        return recepient;
+    public Address recipient() {
+        return recipient;
     }
 
     public Optional<String> text() {
@@ -39,10 +39,6 @@ public class MessageToSend extends Activity {
 
     public Conversation conversation() {
         return conversation;
-    }
-
-    public String channelId() {
-        return channelId;
     }
 
     public Optional<Address> from() {

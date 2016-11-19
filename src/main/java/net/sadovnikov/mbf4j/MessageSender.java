@@ -6,14 +6,12 @@ import com.google.gson.GsonBuilder;
 import net.sadovnikov.mbf4j.activities.outcoming.MessageToSend;
 import net.sadovnikov.mbf4j.activities.outcoming.SentMessage;
 import net.sadovnikov.mbf4j.http.HttpException;
-import net.sadovnikov.mbf4j.http.api.ApiRequest;
 import net.sadovnikov.mbf4j.http.api.ApiRequestFactory;
 import net.sadovnikov.mbf4j.http.api.Request;
 import net.sadovnikov.mbf4j.http.api.ResponseParseException;
 import net.sadovnikov.mbf4j.http.api.gson.serializers.MessageToSendSerializer;
 import net.sadovnikov.mbf4j.http.api.response.IdApiResponse;
 
-import java.io.IOException;
 
 public class MessageSender {
 
@@ -32,9 +30,8 @@ public class MessageSender {
 
     public SentMessage send(MessageToSend message) throws ApiException,HttpException {
         Gson gson = gsonBuilder.create();
-        message.withFrom(new Address(null, botName));
 
-        Request request = requestFactory.post("/conversations/" + message.conversation().id() + "/activities", gson.toJson(message));
+        Request request = requestFactory.post(message.channel(), "/conversations/" + message.conversation().id() + "/activities", gson.toJson(message));
         try {
             IdApiResponse id = request.execute().getObject(IdApiResponse.class);
             return new SentMessage(message, id.id());

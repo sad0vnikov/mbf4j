@@ -45,8 +45,9 @@ public class ApiCallbackHandler extends HttpHandler {
         if (activity.isMessage()) {
             IncomingMessage message = gson.fromJson(requestBody, IncomingMessage.class);
             logger.info("got incoming message from " + message.from().name + " (id = " + message.from().id()
-                    + "), channel_id = " + message.channelId() + ", text = " + message.text().get());
+                    + "), channel_id = " + message.channel().id() + ", text = " + message.text().get());
             botEventBroker.publishEvent(new ActivityEvent<>(EventTypes.EVENT_TYPE_INCOMING_MESSAGE, message));
+
         }
 
         JsonObject jsonResponse =  new JsonObject();

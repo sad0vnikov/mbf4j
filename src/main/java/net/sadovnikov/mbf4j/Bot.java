@@ -27,8 +27,7 @@ public class Bot {
 
     protected Optional<String> clientId = Optional.empty();
     protected Optional<String> clientSecret = Optional.empty();
-    protected String botName = "mbf4j bot";
-
+    protected String botName = "default-bot";
     Logger logger = LoggerFactory.getLogger(getClass());
 
 
@@ -49,11 +48,6 @@ public class Bot {
             factory.withOauth(new OAuthManager(clientId.get(), clientSecret.get()));
         }
         logger.info("using " + factory.getClass().getName() + " api request factory");
-        return this;
-    }
-
-    public Bot setBotName(String botName) {
-        this.botName = botName;
         return this;
     }
 

@@ -118,7 +118,7 @@ public class HttpRequest {
             this.responseCode = connection.getResponseCode();
             this.responseMessage = connection.getResponseMessage();
             InputStream in;
-            if (responseCode <= 200 || responseCode <= 299) {
+            if (responseCode <= 200 || responseCode <= 399) {
                 in = connection.getInputStream();
             } else {
                 in = connection.getErrorStream();
