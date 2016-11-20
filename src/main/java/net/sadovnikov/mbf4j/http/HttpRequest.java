@@ -26,6 +26,7 @@ public class HttpRequest {
     public final int STATUS_OK = 200;
     public final int STATUS_CREATED = 201;
     public final int STATUS_ACCEPTED = 202;
+    public final int STATUS_NO_CONTENT = 204;
     public final int STATUS_BAD_REQUEST = 400;
     public final int STATUS_UNAUTHORIZED = 401;
     public final int STATUS_FORBIDDEN = 403;

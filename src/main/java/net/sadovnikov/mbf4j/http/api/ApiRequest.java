@@ -1,10 +1,14 @@
 package net.sadovnikov.mbf4j.http.api;
 
+import com.google.gson.Gson;
 import net.sadovnikov.mbf4j.ApiException;
 import net.sadovnikov.mbf4j.http.HttpException;
 import net.sadovnikov.mbf4j.http.HttpRequest;
+import net.sadovnikov.mbf4j.http.api.response.ErrorApiResponse;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public abstract class ApiRequest implements Request {
 
@@ -33,7 +37,23 @@ public abstract class ApiRequest implements Request {
         return httpRequest;
     }
 
-    public abstract ApiResponseParser execute() throws ApiException, HttpException;
+    protected Set<Integer> getOkStatuses() {
+        Set<Integer> statuses = new HashSet<>();
+        statuses.add(httpRequest.STATUS_OK);
+        return statuses;
+    }
+
+    protected abstract void executeRequest() throws HttpException;
+
+    public ApiResponseParser execute() throws ApiException, HttpException {
+        executeRequest();
+        int responseCode = httpRequest.responseCode();
+        if (getOkStatuses().contains(responseCode)) {
+            Gson gson = new Gson();
+            throw new ApiException(httpRequest.responseBody());
+        }
+        return new ApiResponseParser(httpRequest.responseBody());
+    }
 
 
 
