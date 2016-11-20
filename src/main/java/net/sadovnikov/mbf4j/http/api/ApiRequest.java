@@ -48,8 +48,8 @@ public abstract class ApiRequest implements Request {
     public ApiResponseParser execute() throws ApiException, HttpException {
         executeRequest();
         int responseCode = httpRequest.responseCode();
-        if (getOkStatuses().contains(responseCode)) {
-            Gson gson = new Gson();
+        Set<Integer> okStatuses = getOkStatuses();
+        if (!okStatuses.contains(responseCode)) {
             throw new ApiException(httpRequest.responseBody());
         }
         return new ApiResponseParser(httpRequest.responseBody());

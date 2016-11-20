@@ -13,11 +13,11 @@ public class IncomingActivity extends Activity {
     protected Address recipient;
     protected Channel channel;
 
-    public IncomingActivity(String type, String id, Address from, Address recepient) {
+    public IncomingActivity(String type, String id, Address from, Address recipient) {
         this.type = type;
         this.id = id;
         this.from = from;
-        this.recipient = recepient;
+        this.recipient = recipient;
     }
 
     public String id() {

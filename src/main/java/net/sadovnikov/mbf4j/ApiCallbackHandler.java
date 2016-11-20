@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import net.sadovnikov.mbf4j.activities.Activity;
+import net.sadovnikov.mbf4j.activities.incoming.ConversationUpdate;
 import net.sadovnikov.mbf4j.activities.incoming.IncomingMessage;
 import net.sadovnikov.mbf4j.events.ActivityEvent;
 import net.sadovnikov.mbf4j.events.EventBroker;
 import net.sadovnikov.mbf4j.events.EventTypes;
+import net.sadovnikov.mbf4j.http.api.gson.deserializers.ConversationUpdateDeserializer;
 import net.sadovnikov.mbf4j.http.api.gson.deserializers.IncomingMessageDeserializer;
 import net.sadovnikov.mbf4j.http.server.HttpEndpoint;
 import net.sadovnikov.mbf4j.http.server.HttpHandler;
@@ -28,6 +30,7 @@ public class ApiCallbackHandler extends HttpHandler {
         this.botEventBroker = eventBroker;
         gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(IncomingMessage.class, new IncomingMessageDeserializer());
+        gsonBuilder.registerTypeAdapter(ConversationUpdate.class, new ConversationUpdateDeserializer());
     }
 
     @Override
@@ -42,13 +45,23 @@ public class ApiCallbackHandler extends HttpHandler {
         int httpStatus = HttpResponse.STATUS_OK;
         Activity activity = gson.fromJson(requestBody, Activity.class);
 
-        if (activity.isMessage()) {
-            IncomingMessage message = gson.fromJson(requestBody, IncomingMessage.class);
-            logger.info("got incoming message from " + message.from().name + " (id = " + message.from().id()
-                    + "), channel_id = " + message.channel().id() + ", text = " + message.text().get());
-            botEventBroker.publishEvent(new ActivityEvent<>(EventTypes.EVENT_TYPE_INCOMING_MESSAGE, message));
+        try {
+            if (activity.type().equals(activity.TYPE_MESSAGE)) {
+                IncomingMessage message = gson.fromJson(requestBody, IncomingMessage.class);
+                logger.info("got incoming message from " + message.from().name + " (id = " + message.from().id()
+                        + "), channel_id = " + message.channel().id() + ", text = " + message.text().get());
+                botEventBroker.publishEvent(new ActivityEvent<>(EventTypes.EVENT_TYPE_INCOMING_MESSAGE, message));
+            }
 
+            if (activity.type().equals(activity.TYPE_CONVERSATION_UPDATE)) {
+                ConversationUpdate conversationUpdate = gson.fromJson(requestBody, ConversationUpdate.class);
+                logger.info("got new conversation update event (conversation id = " + conversationUpdate.conversation().id() + ")");
+                botEventBroker.publishEvent(new ActivityEvent<>(EventTypes.EVENT_TYPE_CONVERSATION_UPDATE, conversationUpdate));
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
+
 
         JsonObject jsonResponse =  new JsonObject();
         jsonResponse.addProperty("status", responseStatus);
