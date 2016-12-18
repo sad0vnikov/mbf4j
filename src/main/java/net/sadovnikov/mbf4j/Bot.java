@@ -2,6 +2,7 @@ package net.sadovnikov.mbf4j;
 
 import net.sadovnikov.mbf4j.activities.incoming.IncomingActivity;
 import net.sadovnikov.mbf4j.events.EventBroker;
+import net.sadovnikov.mbf4j.events.EventDispatcher;
 import net.sadovnikov.mbf4j.events.EventTypes;
 import net.sadovnikov.mbf4j.http.api.ApiRequestFactory;
 import net.sadovnikov.mbf4j.http.api.DefaultRequestFactory;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Optional;
 
-public class Bot {
+public class Bot implements EventDispatcher {
 
     protected static final int DEFAULT_HTTP_PORT = 3978;
 
