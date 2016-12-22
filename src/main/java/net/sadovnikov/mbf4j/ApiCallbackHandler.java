@@ -59,7 +59,7 @@ public class ApiCallbackHandler extends HttpHandler {
                 botEventBroker.publishEvent(new ActivityEvent<>(EventTypes.EVENT_TYPE_CONVERSATION_UPDATE, conversationUpdate));
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            logger.error(e.getMessage(), e);
         }
 
 
