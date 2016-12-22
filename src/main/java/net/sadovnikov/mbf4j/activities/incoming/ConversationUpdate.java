@@ -9,8 +9,8 @@ import java.util.List;
 
 public class ConversationUpdate extends IncomingActivity {
 
-    List<Address> membersAdded;
-    List<Address> membersRemoved;
+    List<Address> membersAdded = new ArrayList<>();
+    List<Address> membersRemoved = new ArrayList<>();
     protected Conversation conversation;
 
     public ConversationUpdate(String type, String id, Address from, Address recipient, Conversation conversation) {
