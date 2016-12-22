@@ -12,24 +12,29 @@ public class MessageToSend extends Activity {
 
 
     protected String text;
-    protected Address recipient;
+    protected Optional<Address> recipient = recipient().empty();
     protected Address from;
     protected Conversation conversation;
     protected Channel channel;
 
     public final String TYPE_TEXT = "message";
 
-    public MessageToSend(Channel channel, Conversation conversation, Address address, String text) {
+    public MessageToSend(Channel channel, Conversation conversation, String text) {
         type = TYPE_TEXT;
         this.text = text;
-        this.recipient = address;
         this.conversation = conversation;
         this.channel = channel;
     }
 
+    public MessageToSend(Channel channel, Conversation conversation, Address address, String text) {
+        this(channel, conversation, text);
+        this.recipient = Optional.of(address);
+    }
+
+
     public Channel channel() { return channel; }
 
-    public Address recipient() {
+    public Optional<Address> recipient() {
         return recipient;
     }
 

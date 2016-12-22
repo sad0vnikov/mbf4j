@@ -6,7 +6,8 @@ public class SentMessage extends MessageToSend {
     private String id;
 
     public SentMessage(MessageToSend messageToSend, String id) {
-        super(messageToSend.channel(), messageToSend.conversation(), messageToSend.recipient(), messageToSend.text().get());
+        super(messageToSend.channel(), messageToSend.conversation(), messageToSend.text().get());
+        this.recipient = messageToSend.recipient();
         this.id = id;
     }
 

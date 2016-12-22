@@ -21,7 +21,9 @@ public class MessageToSendSerializer implements JsonSerializer<MessageToSend> {
                 text -> root.addProperty("text", text)
         );
 
-        root.add("recipient", context.serialize(messageToSend.recipient(), Address.class));
+        if (messageToSend.recipient().isPresent()) {
+            root.add("recipient", context.serialize(messageToSend.recipient().get(), Address.class));
+        }
         root.add("conversation", context.serialize(messageToSend.conversation(), Conversation.class));
 
         messageToSend.from().ifPresent(

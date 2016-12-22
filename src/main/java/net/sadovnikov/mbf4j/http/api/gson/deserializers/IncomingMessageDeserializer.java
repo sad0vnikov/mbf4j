@@ -33,7 +33,11 @@ public class IncomingMessageDeserializer implements JsonDeserializer<IncomingMes
                     Channel.Types.valueOf(channelId.toUpperCase())
             ));
         } catch (IllegalArgumentException e) {
-            logger.error("got unknown chat id: " + channelId);
+            logger.error("got unknown channel id: " + channelId);
+        }
+
+        if (object.has("membersAdded")) {
+
         }
 
 
