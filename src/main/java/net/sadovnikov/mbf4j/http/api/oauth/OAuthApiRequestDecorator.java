@@ -30,4 +30,9 @@ public class OAuthApiRequestDecorator implements Request {
 
         return request.execute();
     }
+
+    @Override
+    public String getEnformedUrl() {
+        return request.getEnformedUrl();
+    }
 }

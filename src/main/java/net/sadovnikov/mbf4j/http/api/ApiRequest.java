@@ -58,7 +58,7 @@ public abstract class ApiRequest implements Request {
 
 
     protected final HttpRequest enformHttpRequest() {
-        HttpRequest httpRequest = new HttpRequest(getProtocol() + getApiHost() + ":" + getApiPort() + endpoint, body);
+        HttpRequest httpRequest = new HttpRequest(getEnformedUrl(), body);
         httpRequest.addHeader("Content-Type", "application/json");
         httpRequest.addHeader("Charset", "utf-8");
 
@@ -100,6 +100,11 @@ public abstract class ApiRequest implements Request {
         this.isHTTPS = isHTTPS;
         httpRequest = enformHttpRequest();
         return this;
+    }
+
+    @Override
+    public String getEnformedUrl() {
+        return getProtocol() + getApiHost() + ":" + getApiPort() + endpoint;
     }
 
     protected String getProtocol() {

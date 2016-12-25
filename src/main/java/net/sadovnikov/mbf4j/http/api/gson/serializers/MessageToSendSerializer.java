@@ -1,10 +1,8 @@
 package net.sadovnikov.mbf4j.http.api.gson.serializers;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
 import net.sadovnikov.mbf4j.Address;
+import net.sadovnikov.mbf4j.UploadedAttachment;
 import net.sadovnikov.mbf4j.activities.outcoming.MessageToSend;
 import net.sadovnikov.mbf4j.http.Conversation;
 
@@ -29,6 +27,14 @@ public class MessageToSendSerializer implements JsonSerializer<MessageToSend> {
         messageToSend.from().ifPresent(
                 from -> root.add("from", context.serialize(from, Address.class))
         );
+
+        if (messageToSend.attachments().length > 0) {
+            JsonArray attachments = new JsonArray();
+            for (UploadedAttachment attachment : messageToSend.attachments()) {
+                attachments.add(context.serialize(attachment, UploadedAttachment.class));
+            }
+            root.add("attachments", attachments);
+        }
 
 
 

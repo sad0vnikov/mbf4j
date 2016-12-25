@@ -3,9 +3,12 @@ package net.sadovnikov.mbf4j.activities.outcoming;
 
 import net.sadovnikov.mbf4j.Address;
 import net.sadovnikov.mbf4j.Channel;
+import net.sadovnikov.mbf4j.UploadedAttachment;
 import net.sadovnikov.mbf4j.activities.Activity;
 import net.sadovnikov.mbf4j.http.Conversation;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class MessageToSend extends Activity {
@@ -16,6 +19,7 @@ public class MessageToSend extends Activity {
     protected Address from;
     protected Conversation conversation;
     protected Channel channel;
+    protected List<UploadedAttachment> attachments = new ArrayList<>();
 
     public final String TYPE_TEXT = "message";
 
@@ -53,5 +57,15 @@ public class MessageToSend extends Activity {
     public MessageToSend withFrom(Address from) {
         this.from = from;
         return this;
+    }
+
+    public MessageToSend addAttachment(UploadedAttachment attachment) {
+        this.attachments.add(attachment);
+        return this;
+    }
+
+    public UploadedAttachment[] attachments() {
+        UploadedAttachment[] attachmentsArray = new UploadedAttachment[attachments.size()];
+        return attachments.toArray(attachmentsArray);
     }
 }

@@ -8,6 +8,7 @@ import net.sadovnikov.mbf4j.http.api.ApiRequestFactory;
 import net.sadovnikov.mbf4j.http.api.DefaultRequestFactory;
 import net.sadovnikov.mbf4j.http.api.emulator.EmulatorApiRequestFactory;
 import net.sadovnikov.mbf4j.http.api.oauth.OAuthManager;
+import net.sadovnikov.mbf4j.http.api.response.AttachmentViewApiResponse;
 import net.sadovnikov.mbf4j.http.server.impl.DefaultHttpServer;
 import net.sadovnikov.mbf4j.http.server.HttpServer;
 import org.slf4j.Logger;
@@ -61,6 +62,10 @@ public class Bot implements EventDispatcher {
 
     public MessageSender messageSender() {
         return new MessageSender(apiRequestFactory, botName);
+    }
+
+    public AttachmentRepository attachments() {
+        return new AttachmentRepository(apiRequestFactory);
     }
 
 

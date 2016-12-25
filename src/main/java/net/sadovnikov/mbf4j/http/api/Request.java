@@ -6,4 +6,5 @@ import net.sadovnikov.mbf4j.ApiException;
 public interface Request {
 
     ApiResponseParser execute() throws ApiException, HttpException;
+    String getEnformedUrl();
 }
